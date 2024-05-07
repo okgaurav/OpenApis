@@ -1,0 +1,143 @@
+openapi: 3.0.1
+info:
+  title: "Payments API"
+  version: "1.0.0"
+  contact:
+    name: Stalin Coorp
+    email: stalin@hotmail.com
+    url: https://example.com/
+tags:
+  - name: Account Management
+    description: Account related requests
+  - name: Customer Management
+    description: customer related requests
+  - name: Monetory Management
+    description: Monetory transaction requests
+  - name: Operating Ranges
+    description: Operationals Limits on Accounts
+  - name: Exceptional Situation
+    description: Manage Exceptional Situation
+  - name: Overdraft Limits
+    description: Manage Overdraft Limits Evolutions
+paths:
+  /account:
+    get:
+      operationId: getMetadata
+      summary: Find account by Technical Identifier
+      tags: [ Account Management ]
+      parameters:
+        - name: accountId 
+          in: query
+          description: Identifier of Accounts
+          required: true
+          schema:
+            type: string
+            format: accountId
+            pattern: '^[0-9a-zA-Z-]{1,36}$'
+          
+        - name: range
+          in: query
+          description: Optional param for pagination request(zero indexed)
+          required: false
+          schema:
+            type: string
+            example: 0-49
+            format: Range
+            pattern: '^[0-9]*-[0-9]*$'
+            title: range
+            
+        - name: includeClosedAccount
+          in: query
+          description: to include closed account / inactive accounts
+          required: false
+          schema:
+            type: boolean
+            example: false
+            format: "TrueFalseIndicator"
+            title: includeClosedAccount
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: List accounts
+                type: array
+                items:
+                  $ref: ../directory/commons.openapi.yaml#/components/schemas/AccountResponse-1.0
+    post:
+      operationId: getMetadata
+      summary: Create account
+      tags: [ Account Management ]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                description: List accounts
+                $ref: ../directory/commons.openapi.yaml#/components/schemas/AccountInput-1.0
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: List accounts
+                $ref: ../directory/commons.openapi.yaml#/components/schemas/AccountResponse-1.0
+  /customer:
+    get:
+      operationId: getMetadata
+      summary: Find account by Technical Identifier
+      tags: [ Customer Management ]
+      parameters:
+        - name: customerId 
+          in: query
+          description: Identifier of Accounts
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: List accounts
+                type: array
+                items:
+                  $ref: ../directory/commons.openapi.yaml#/components/schemas/CustomerInformation-1.0
+  /monetory/{transactionId}:
+    get:
+      operationId: getMetadata
+      summary: Find Transaction by Technical Identifier
+      tags: [ Monetory Management ]
+      parameters:
+        - name: transactionId 
+          in: path
+          description: Technical identifier of Transaction
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../directory/commons.openapi.yaml#/components/schemas/BookedTransaction-1.0
+
+  /monetory/{accountId}:
+    get:
+      operationId: getMetadata
+      summary: Find position by accountId
+      tags: [ Monetory Management ]
+      parameters:
+        - name: accountId 
+          in: path
+          description: Monetory details of account number
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../directory/commons.openapi.yaml#/components/schemas/accountMonetory-1.0
+
+  
+    

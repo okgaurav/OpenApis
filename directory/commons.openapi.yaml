@@ -1,0 +1,421 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: commons archival
+  description: commons warehouse for all microservices
+
+components:
+  schemas:
+    AccountResponse-1.0:
+      title: AccountIdentifier-1.0
+      type: object
+      description: Functional Identification of an account
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        accountIdentifiers:
+          $ref: '#/components/schemas/accountIdentifier'
+        productCode:
+          $ref: '#/components/schemas/accountProductCode'
+        accountCurrency:
+          $ref: '#/components/schemas/accountCurrency'
+        comment:
+          $ref: '#/components/schemas/accountComment'
+        overdraftLimit:
+          $ref: '#/components/schemas/OverdraftLimit-1.0'
+        accountStatus:
+          $ref: '#/components/schemas/accountStatus'
+        startingDate:
+          $ref: '#/components/schemas/date'
+        operationalDate:
+          $ref: '#/components/schemas/date'
+        customerId:
+          type: integer
+          example: 66293f4772d7c683eea4432f
+          pattern: '^[0-9a-zA-Z-]{1,36}$'
+          description: "The unique identifier for the customer."
+        
+    AccountInput-1.0:
+      title: AccountInput-1.0
+      type: object
+      description: Create an account
+      properties:
+        customerReference:
+          $ref: '#/components/schemas/customerIdentifier-1.0'
+        productCode:
+          $ref: '#/components/schemas/accountProductCode'
+        accountCurrency:
+          $ref: '#/components/schemas/accountCurrency'
+        comment:
+          $ref: '#/components/schemas/accountComment'
+
+    accountId:
+      title: accountId
+      type: string
+      description: Technical identifier of an account
+      format: AccountId
+      example: 662b624088e496a466c20f62
+      pattern: '^[0-9a-zA-Z-]{1,36}$'
+    accountIdentifier:
+      title: accountIdentifier
+      type: string
+      description: Functional identifier of an account
+      format: AccountIdentifierId
+      example: BE7894512325478
+      pattern: '[A-Z0-9]{1,34}'
+    accountProductCode:
+      type: string
+      title: accountProductCode
+      description: Account Product Code
+      example: REGULAR_SAVING_ACCOUNT
+      enum:
+        - REGULAR_SAVING_ACCOUNT
+        - REGULAR_CURRENT_ACCOUNT
+        - REGULAR_OVERDRAFT_ACCOUNT
+    accountCurrency:
+      title: accountCurrency
+      type: string
+      description: Currency of an account
+      format: CurrencyCode
+      example: INR
+      pattern: '[A-Z]{3,3}'
+    accountComment:
+      title: accountComment
+      type: string
+      description: account Comment
+      format: MAX200AllCharText
+      maxLength: 200
+      example: This is an account comment
+    accountStatus:
+      type: string
+      title: accountStatus
+      description: Account Status Code
+      example: ACTIVE
+      enum:
+        - ACTIVE
+        - CLOSED
+        - BLOCKED
+        - CLOSURE_IN_PROGRESS
+    OverdraftLimit-1.0:
+      title: OverdraftLimit-1.0
+      type: object
+      description: Overdraft limit information
+      properties:
+        type:
+          $ref: "#/components/schemas/accountOverdraftLimitType"
+        amount:
+          $ref: "#/components/schemas/AccountOverdraftLimitAmount"
+          required:
+            - currency
+            - value
+    accountOverdraftLimitType:
+      type: string
+      title: "accountOverdraftLimitType"
+      description: Type of the overdraft limit.
+      example: CASH_FACILITY
+      format: AccountOverdraftLimitType
+      maxLength: 50
+      pattern: '^[A-Z0-9_]{1,50}$'
+    AccountOverdraftLimitAmount:
+      type: object
+      title: "AccountOverdraftLimitAmount"
+      description: Overdraft limit amount
+      properties:
+        currency:
+          $ref: "#/components/schemas/accountCurrency"
+        value:
+          type: number
+          description: Value of the amount (Zero or positive only)
+          example: 1500
+          format: Length17Fraction3Signed
+    date:
+      type: string
+      title: date
+      description: 'date of Operation'
+      format: date
+      pattern: '\d{4}-\d{2}-\d{2}'
+      example: '2024-04-25'
+    address-1.0:
+      type: object
+      title: Address
+      description: Address of Customer
+      format: object
+      properties:
+        street:
+          type: string
+          example: "123 Main Street"
+          description: "The street address."
+        city:
+          type: string
+          example: "New York"
+          description: "The city."
+        state:
+          type: string
+          example: "NY"
+          description: "The state or region."
+        postalCode:
+          type: string
+          example: "10001"
+          description: "The postal code."
+          format: "postal-code"
+        country:
+          type: string
+          example: "USA"
+          description: "The country."
+    CustomerInformation-1.0:
+      type: object
+      properties:
+        customerIdentifier:
+          $ref: "#/components/schemas/customerIdentifier-1.0"
+        customerId:
+          $ref: "#/components/schemas/MongoId-1.0"
+        firstName:
+          type: string
+          example: "John"
+          description: "The first name of the customer."
+        lastName:
+          type: string
+          example: "Doe"
+          description: "The last name of the customer."
+        dateOfBirth:
+          type: string
+          format: date
+          example: "1990-01-01"
+          description: "The date of birth of the customer."
+        nationality:
+          type: string
+          example: "US Citizen"
+          description: "The nationality of the customer."
+        occupation:
+          type: string
+          example: "Software Engineer"
+          description: "The occupation of the customer."
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+          description: "The email address of the customer."
+        phone:
+          type: string
+          format: phone
+          example: "+91 8182-000-890"
+          description: "The phone number of the customer."
+        customerIdentification:
+          type: array
+          items:
+            $ref: "#/components/schemas/identification-1.0"
+        address:
+          $ref: "#/components/schemas/address-1.0"
+        lastUpdateDateTime:
+          $ref: '#/components/schemas/dateTime'
+        
+
+
+    identification-1.0:
+    
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Passport"
+          description: "The type of identification document."
+        number:
+          type: string
+          example: "AB123456"
+          description: "The identification document number."
+        issueDate:
+          type: string
+          format: date
+          example: "2020-01-01"
+          description: "The issue date of the identification document."
+        expiryDate:
+          type: string
+          format: date
+          example: "2030-01-01"
+          description: "The expiry date of the identification document."
+    TransactionAmount-1.0:
+      title: TransactionAmount-1.0
+      description: Transaction Amount in number and currency
+      type: object
+      required:
+        - currency
+        - value
+      properties:
+        currency:
+          $ref: "#/components/schemas/accountCurrency"
+        value:
+          type: number
+          format: 'Length17Fraction3Signed'
+          description: Value of the amount (sign included)
+    transactionType:
+      type: string
+      description: "Position keeping proprietary code identifying the context of the movement.  This code is notably used in the configuration rules of the authorization engine and for the display of the transaction type in UI's. Possible values depend on the core banking system. If the value is not given, a default value is computed based on the bankTransactionFamily and bankTransactionSubFamily."
+      title: transactionType
+      example: ACCOUNT_CLOSURE
+      format: PositionKeepingTransactionType
+      pattern: '^[A-Z0-9_]{1,50}$'
+    
+
+    BookedTransaction-1.0:
+      description: 'Input data for card booking request on an account'
+      type: object
+      title: BookedTransaction-1.0
+      properties:
+        transactionId:
+          $ref: '#/components/schemas/MongoId-1.0'
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        account:
+          $ref: '#/components/schemas/accountIdentifier'
+        amount:
+          $ref: '#/components/schemas/TransactionAmount-1.0'
+        operationDate:
+          $ref: '#/components/schemas/date'
+        authorizationDecision:
+          $ref: '#/components/schemas/authorizationDecision-1.0'
+        reservationId:
+          type: integer
+          example: 66293f4772d7c683eea4432f
+          pattern: '^[0-9a-zA-Z-]{1,36}$'
+          description: "The unique identifier for the reservation."
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        transactionDetails:
+          $ref: '#/components/schemas/TransactionDetails-1.0'
+      required:
+        - amount
+        - operationDate
+    
+    TransactionDetails-1.0:
+      description: 'Messaging part for credit transfer transactions. '
+      properties:
+        counterpartyInformation:
+          $ref: '#/components/schemas/CounterpartyInformation-2.0'
+        transactionDateTime:
+          $ref: '#/components/schemas/dateTime'
+        paymentId:
+          type: integer
+          example: 66293f4772d7c683eea4432f
+          pattern: '^[0-9a-zA-Z-]{1,36}$'
+          description: "The unique identifier for the payment."
+        acceptanceDateTime:
+          $ref: '#/components/schemas/dateTime'
+      type: object
+      title: TransactionDetails-1.0
+    dateTime:
+      type: string
+      title: dateTime
+      description: Timestamp when the Operation has been instructed.
+      example: '2020-01-30T15:59:00.000Z'
+      format: date-time
+      pattern: '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z'
+    CounterpartyInformation-2.0:
+      title: CounterpartyInformation-2.1
+      type: object
+      description: Information about a counterparty
+      properties:
+        name:
+          type: string
+          format: AddressName
+          description: Name of the counterparty
+          maxLength: 140
+          example: John Cena
+        postalAddress:
+          $ref: '#/components/schemas/address-1.0'
+        counterpartyAccount:
+            $ref: '#/components/schemas/accountIdentifier'
+        
+    MongoId-1.0:
+      title: mongoId
+      type: string
+      description: Technical identifier
+      format: mongoId
+      example: 662b61b9afe149fc97c97c44
+      pattern: '^[0-9a-zA-Z-]{1,36}$'
+    
+    customerIdentifier-1.0:
+      title: customerIdentifier
+      type: string
+      description: Customer identifier
+      example: D001
+      pattern: '^[A-Z0-9-]{1,36}$'
+
+    authorizationDecision-1.0:
+      type: string
+      title: authorization Decision
+      description: Booking Status Code
+      example: AUTHORIZED
+      enum:
+        - AUTHORIZED
+        - REJECTED
+        - INPROGRESS
+        - REVERIFICATION
+
+    accountMonetory-1.0:
+      description: 'Monetory part of Account'
+      properties:
+        availableAmount:
+          $ref: '#/components/schemas/AvailableAmount'
+        bookedBalance:
+          $ref: '#/components/schemas/BookedBalance'
+        currentBalance:
+          $ref: '#/components/schemas/CurrentBalance'
+        totalReservations:
+          $ref: '#/components/schemas/TotalReservations'
+        totalBlockedAmounts:
+          $ref: '#/components/schemas/TotalBlockedAmounts'
+      type: object
+      title: accountMonetory-1.0
+
+    AvailableAmount:
+      type: object
+      title: AvailableAmount
+      description: 'This is the available amount on the account. The available amount is the booked balance reduced from the blocked amounts and added with the reservations. '
+      allOf:
+        -  $ref: '#/components/schemas/st-Amount'
+    BookedBalance:
+      type: object
+      title: BookedBalance
+      description: 'This is the booked balance on the account representing the sum of the bookings. '
+      allOf:
+        -  $ref: '#/components/schemas/st-Amount'
+    ComponentAmount:
+      type: object
+      title: ComponentAmount
+      description: 'This is the amount associated to the component. '
+      allOf:
+         -  $ref: '#/components/schemas/st-Amount'
+
+    CurrentBalance:
+      type: object
+      title: CurrentBalance
+      description: 'This is the current balance of the account. This amount corresponds to the sum of the booked balance and the total of the reservations. '
+      allOf:
+        -  $ref: '#/components/schemas/st-Amount'
+
+    TotalReservations:
+      type: object
+      description: Total of the reserved amounts of the account.
+      title: TotalReservations
+      allOf:
+        -  $ref: '#/components/schemas/st-Amount'
+    TotalBlockedAmounts:
+      type: object
+      description: Total of the blocked amounts of the account.
+      title: TotalBlockedAmounts
+      allOf:
+        -  $ref: '#/components/schemas/st-Amount'
+    
+    st-Amount:
+      description: 'Monetory part of Account'
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 100
+          format: 'Length17Fraction3Signed'
+          description: Value of the amount (sign included)
+        currency:
+          type: string
+          example: INR
+          
